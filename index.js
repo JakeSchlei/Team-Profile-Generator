@@ -1,3 +1,4 @@
+const generatePage = require('./src/page-template');
 const inquirer = require("inquirer");
 const fs = require("fs");
 
@@ -102,11 +103,31 @@ const employeePrompt = () => {
 
 };
 
+const writeFile = fileContent => {
+    return new Promise((resolve, reject) => {
+        fs.writeFile('./dist/index.html', fileContent, err => {
+            if (err) {
+                reject(err);
+                return;
+            }
+
+            resolve ({
+                message: 'File Created! Check the HTML file for the results!'
+            });
+        });
+    });
+};
 
 managerPrompt()
 .then(employeePrompt)
 .then(data => {
-    console.log(teamArr)
+    return generatePage(data);
+})
+.then(pageHTML => {
+    return writeFile(pageHTML);
+})
+.then(writeFileResponse => {
+    console.log(writeFileResponse);
 })
 .catch(err => {
     console.log(err);
