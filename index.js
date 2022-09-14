@@ -1,45 +1,57 @@
 const inquirer = require("inquirer");
+const fs = require("fs");
+
+
+const Manager = require("./lib/Manager");
+const Engineer = require("./lib/Engineer");
+const Intern = require("./lib/Intern");
+
+let teamArr = [];
 
 const managerPrompt = () => {
-  return inquirer.prompt([
-    {
-      type: "input",
-      name: "name",
-      message: "Who will be the manager for this team?",
-    },
-    {
-      type: "input",
-      name: "id",
-      message: "Please enter an ID number for the employee:",
-    },
-    {
-      type: "input",
-      name: "email",
-      message: "Please enter an email address for the employee:",
-    },
-    {
-      type: "input",
-      name: "officeNum",
-      message: "What office number will the employee have?",
-    },
-    {
-      type: "list",
-      name: "addEmployee",
-      message:
-        "Would you like to add any other employees to the team? If finished, select done.",
-      choices: ["Engineer", "Intern", "Done"],
-    },
-  ]);
-//   Need a .then statement to prompt the user to the appropriate prompt, also need to find a way to keep all the data together
-//  Need a function if the user selects done that assembles the team and writes to HTML file 
+  return inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "name",
+        message: "Who will be the manager for this team?",
+      },
+      {
+        type: "input",
+        name: "id",
+        message: "Please enter an ID number for the employee:",
+      },
+      {
+        type: "input",
+        name: "email",
+        message: "Please enter an email address for the employee:",
+      },
+      {
+        type: "input",
+        name: "officeNumber",
+        message: "What office number will the employee have?",
+      },
+    ])
+    .then((managerInput) => {
+      const { name, id, email, officeNumber } = managerInput;
+      const manager = new Manager(name, id, email, officeNumber);
+
+      teamArr.push(manager);
+    });
 };
 
-const engineerPrompt = () => {
+const employeePrompt = () => {
   return inquirer.prompt([
+    {
+      type: "list",
+      name: "role",
+      message: "Who do you want to add?",
+      choices: ["Intern", "Engineer"],
+    },
     {
       type: "input",
       name: "name",
-      message: "What is the name of the engineer?",
+      message: "What is the employee's name?",
     },
     {
       type: "input",
@@ -55,45 +67,48 @@ const engineerPrompt = () => {
       type: "input",
       name: "github",
       message: "What is the GitHub username for the employee?",
-    },
-    {
-      type: "list",
-      name: "addEmployee",
-      message:
-        "Would you like to add any other employees to the team? If finished, select done.",
-      choices: ["Engineer", "Intern", "Done"],
-    },
-  ]);
-};
-
-const internPrompt = () => {
-  return inquirer.prompt([
-    {
-      type: "input",
-      name: "name",
-      message: "What is the name of the Intern?",
-    },
-    {
-      type: "input",
-      name: "id",
-      message: "Please enter an ID number for the employee:",
-    },
-    {
-      type: "input",
-      name: "email",
-      message: "Please enter an email address for the employee:",
+      when: (input) => input.role === "Engineer",
     },
     {
       type: "input",
       name: "school",
       message: "What school is the intern attending?",
+      when: (input) => input.role === "Intern",
     },
     {
-      type: "list",
-      name: "addEmployee",
-      message:
-        "Would you like to add any other employees to the team? If finished, select done.",
-      choices: ["Engineer", "Intern", "Done"],
-    },
-  ]);
+        type: "confirm",
+        name: "confirmAddMore",
+        message: "Would you like to add any more members?"
+    }
+  ])
+  .then(employeeInput => {
+    let {role, name, id, email, github, school, confirmAddMore} = employeeInput;
+    let employee;
+
+    if(role === "Engineer") {
+        employee = new Engineer (name, id, email, github);
+    } else if (role === "Intern") {
+        employee = new Intern(name, id, email, school);
+    }
+
+    teamArr.push(employee);
+
+    if(confirmAddMore) {
+        return employeePrompt(teamArr);
+    }
+    return teamArr;
+    
+  })
+
 };
+
+
+managerPrompt()
+.then(employeePrompt)
+.then(data => {
+    console.log(teamArr)
+})
+.catch(err => {
+    console.log(err);
+});
+
