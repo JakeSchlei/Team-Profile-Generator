@@ -7,7 +7,9 @@ const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
 
-let teamArr = [];
+let internArr = [];
+let engineerArr = [];
+let manager;
 
 const managerPrompt = () => {
   return inquirer
@@ -35,9 +37,8 @@ const managerPrompt = () => {
     ])
     .then((managerInput) => {
       const { name, id, email, officeNumber } = managerInput;
-      const manager = new Manager(name, id, email, officeNumber);
+      manager = new Manager(name, id, email, officeNumber);
 
-      teamArr.push(manager);
     });
 };
 
@@ -88,46 +89,49 @@ const employeePrompt = () => {
 
     if(role === "Engineer") {
         employee = new Engineer (name, id, email, github);
+        engineerArr.push(employee);
     } else if (role === "Intern") {
         employee = new Intern(name, id, email, school);
+        internArr.push(employee);
     }
 
-    teamArr.push(employee);
 
     if(confirmAddMore) {
-        return employeePrompt(teamArr);
+        return employeePrompt();
     }
-    return teamArr;
+    return;
     
   })
 
 };
 
-const writeFile = fileContent => {
-    return new Promise((resolve, reject) => {
-        fs.writeFile('./dist/index.html', fileContent, err => {
-            if (err) {
-                reject(err);
-                return;
-            }
+// const writeFile = fileContent => {
+//     return new Promise((resolve, reject) => {
+//         let page = generatePage(manager, engineerArr, internArr);
+//         fs.writeFile('./dist/index.html', fileContent, err => {
+//             if (err) {
+//                 reject(err);
+//                 return;
+//             }
 
-            resolve ({
-                message: 'File Created! Check the HTML file for the results!'
-            });
-        });
-    });
-};
+//             resolve ({
+//                 message: 'File Created! Check the HTML file for the results!'
+//             });
+//         });
+//     });
+// };
+
+function writeFile(fileName, data) {
+    fs.writeFileSync(fileName, data);
+}
+
+
 
 managerPrompt()
 .then(employeePrompt)
-.then(data => {
-    return generatePage(data);
-})
-.then(pageHTML => {
-    return writeFile(pageHTML);
-})
-.then(writeFileResponse => {
-    console.log(writeFileResponse);
+.then(() => {
+    let page = generatePage(manager, engineerArr, internArr);
+    writeFile('./dist/index.html', page);
 })
 .catch(err => {
     console.log(err);
