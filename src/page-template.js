@@ -23,7 +23,6 @@ function managerCard(manager) {
 </div> */
 
 function internCard(intern) {
-    console.log(intern);
     let internCard = '';
     for (let i = 0; i < intern.length; i++) {
     internCard += `
@@ -42,7 +41,6 @@ function internCard(intern) {
 }
 
 function engineerCard(engineer) {
-    console.log(engineer);
     let engineerCard = '';
     for (let i = 0; i < engineer.length; i++) {
     engineerCard += `

@@ -132,6 +132,7 @@ managerPrompt()
 .then(() => {
     let page = generatePage(manager, engineerArr, internArr);
     writeFile('./dist/index.html', page);
+    console.log('Profile has been generated! Please see the HTML file for results!');
 })
 .catch(err => {
     console.log(err);
