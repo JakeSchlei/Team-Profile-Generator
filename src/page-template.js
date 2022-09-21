@@ -79,9 +79,22 @@ function generatePage(manager, engineer, intern) {
     <h1>Team Profile</h1>
     </header>
     <body>
+    <div class="container text-center">
+  <div class="row">
+    <div class="col">
     ${managerCard(manager)}
+    </div>
+    <div class="col">
     ${internCard(intern)}
+    </div>
+    <div class="col">
     ${engineerCard(engineer)}
+    </div>
+  </div>
+</div>
+    
+    
+    
     
 
     

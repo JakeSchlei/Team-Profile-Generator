@@ -1,0 +1,17 @@
+body {
+    font-family: Poppins, serif;
+    background-color: dimgray;
+}
+
+header {
+    height: 80px;
+    text-align: center;
+    background-color: aquamarine;
+    color: rgb(0, 0, 0);
+    margin-bottom: 50px;
+}
+
+.card {
+    box-shadow: 1px 1px rgba(255, 255, 255, 0.8);
+}
+
